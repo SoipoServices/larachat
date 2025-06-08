@@ -150,8 +150,10 @@ class ChatController extends Controller
                 // Mock response for testing or when API key is not set
                 $fullResponse = 'This is a test response.';
                 echo $fullResponse;
-                ob_flush();
-                flush();
+                if (ob_get_level() > 0) {
+                    ob_flush();
+                    flush();
+                }
             } else {
                 try {
                     $stream = OpenAI::chat()->createStreamed([
@@ -164,15 +166,19 @@ class ChatController extends Controller
                         if ($chunk !== null) {
                             $fullResponse .= $chunk;
                             echo $chunk;
-                            ob_flush();
-                            flush();
+                            if (ob_get_level() > 0) {
+                                ob_flush();
+                                flush();
+                            }
                         }
                     }
                 } catch (\Exception $e) {
                     $fullResponse = 'Error: Unable to generate response.';
                     echo $fullResponse;
-                    ob_flush();
-                    flush();
+                    if (ob_get_level() > 0) {
+                        ob_flush();
+                        flush();
+                    }
                 }
             }
 
